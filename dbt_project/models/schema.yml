@@ -1,0 +1,94 @@
+version: 2
+
+models:
+  - name: stg_buildings
+    description: "Cleaned and standardized building registry from raw source"
+    columns:
+      - name: building_id
+        description: "Unique building identifier"
+        tests:
+          - unique
+          - not_null
+      - name: building_type
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['RESIDENTIAL HIGH-RISE','COMMERCIAL OFFICE','RETAIL','INDUSTRIAL','MIXED-USE','GOVERNMENT']
+      - name: zone
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['MANHATTAN','BROOKLYN','QUEENS','BRONX','STATEN ISLAND']
+      - name: total_sqft
+        tests:
+          - not_null
+
+  - name: stg_energy_readings
+    description: "Cleaned smart meter energy readings with data quality flags"
+    columns:
+      - name: reading_id
+        tests:
+          - unique
+          - not_null
+      - name: kwh_consumed
+        description: "Daily energy consumption in kWh"
+        tests:
+          - not_null
+      - name: data_quality_flag
+        tests:
+          - accepted_values:
+              values: ['VALID','ESTIMATED']
+
+  - name: dim_buildings
+    description: >
+      Building dimension table with LL97 thresholds and row-level security tags.
+      Implements regulatory access control via rls_authority_tag.
+    columns:
+      - name: building_sk
+        description: "Surrogate key for the building dimension"
+        tests:
+          - unique
+          - not_null
+      - name: building_id
+        tests:
+          - unique
+          - not_null
+      - name: rls_authority_tag
+        description: "Row-level security tag — controls which regulatory authority can access this building's data"
+        tests:
+          - not_null
+
+  - name: fact_energy_consumption
+    description: >
+      Core fact table at daily building grain.
+      Contains energy consumption, carbon emissions, LL97 compliance flags, and penalty estimates.
+      Joins to dim_buildings, dim_date, weather.
+    columns:
+      - name: reading_id
+        tests:
+          - not_null
+      - name: building_id
+        tests:
+          - not_null
+      - name: date_id
+        tests:
+          - not_null
+      - name: kwh_consumed
+        tests:
+          - not_null
+      - name: ll97_violation_flag
+        description: "True if this building exceeded its LL97 carbon cap on this day"
+
+  - name: metrics_energy_kpis
+    description: >
+      Monthly aggregated KPI table powering all executive dashboards.
+      Includes CTEs, window functions (rolling 3m, rolling 12m, YoY), and compliance metrics.
+    columns:
+      - name: building_id
+        tests:
+          - not_null
+      - name: total_kwh
+        tests:
+          - not_null
+      - name: violation_rate_pct
+        description: "Percentage of days in the month where LL97 carbon cap was exceeded"

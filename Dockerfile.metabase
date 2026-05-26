@@ -1,0 +1,7 @@
+FROM eclipse-temurin:21-jre-jammy
+ENV MB_PLUGINS_DIR=/home/plugins/
+RUN mkdir -p /home/plugins
+ADD https://downloads.metabase.com/v0.50.32/metabase.jar /home/metabase.jar
+ADD https://github.com/MotherDuck-Open-Source/metabase_duckdb_driver/releases/download/0.2.10/duckdb.metabase-driver.jar /home/plugins/duckdb.metabase-driver.jar
+RUN chmod 744 /home/plugins/duckdb.metabase-driver.jar
+CMD ["java", "-jar", "/home/metabase.jar"]

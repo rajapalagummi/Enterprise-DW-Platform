@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-05-26T07:36:13.102869",
+  "total_readings": 97963,
+  "valid_pct": 93.85,
+  "estimated_count": 6022,
+  "outlier_count": 0,
+  "dbt_tests_defined": 12,
+  "governance_controls": [
+    "unique keys",
+    "not_null",
+    "accepted_values",
+    "row-level security"
+  ]
+}

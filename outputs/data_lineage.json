@@ -1,0 +1,79 @@
+{
+  "pipeline": "Urban Energy Data Warehouse",
+  "generated_at": "2026-05-26T07:36:13.081827",
+  "layers": {
+    "raw": {
+      "tables": [
+        "raw_buildings",
+        "raw_time_dim",
+        "raw_weather",
+        "raw_energy_readings",
+        "raw_ll97_compliance"
+      ],
+      "description": "Source data ingested from smart meters, building registry, weather APIs"
+    },
+    "staging": {
+      "tables": [
+        "stg_buildings",
+        "stg_energy_readings"
+      ],
+      "description": "Cleaned, typed, and validated data with DQ flags",
+      "transformations": [
+        "type casting",
+        "null handling",
+        "outlier flagging",
+        "DQ status tagging"
+      ]
+    },
+    "marts": {
+      "tables": [
+        "dim_buildings",
+        "fact_energy_consumption"
+      ],
+      "description": "Star schema: dimension and fact tables optimized for analytics",
+      "transformations": [
+        "LL97 threshold joins",
+        "carbon intensity calculation",
+        "penalty estimation",
+        "row-level security tagging"
+      ]
+    },
+    "metrics": {
+      "tables": [
+        "metrics_energy_kpis"
+      ],
+      "description": "Monthly aggregated KPIs with window functions and YoY comparisons",
+      "transformations": [
+        "monthly aggregation",
+        "rolling 3m/12m windows",
+        "YoY % change",
+        "violation rate calculation"
+      ]
+    },
+    "semantic_layer": {
+      "files": [
+        "lookml/views/buildings.view.lkml",
+        "lookml/views/energy_consumption.view.lkml",
+        "lookml/explores/energy_analytics.explore.lkml"
+      ],
+      "description": "LookML semantic layer: dimensions, measures, access grants, explores",
+      "features": [
+        "row-level security",
+        "drill-through links",
+        "aggregate awareness",
+        "always_filter optimization"
+      ]
+    }
+  },
+  "data_governance": {
+    "row_level_security": "regulatory_authority column controls access per building",
+    "data_quality_tests": [
+      "unique keys",
+      "not null",
+      "accepted values",
+      "referential integrity"
+    ],
+    "audit_trail": "dbt run artifacts logged with timestamp and model hash",
+    "documentation": "All models documented in schema.yml with column descriptions"
+  }
+}
