@@ -254,7 +254,7 @@ docker run -d -p 3000:3000 --name metabase metabase/metabase
 
 # 4. Add database:
 #    Type: DuckDB
-#    Database file: /full/path/to/enterprise-dw-platform/data/energy_warehouse.duckdb
+#    Database file: //absolute/path/to/data/energy_warehouse.duckdb
 
 # 5. Browse tables in main_metrics, main_marts schemas
 #    Build dashboards using energy_kpis.csv as reference for available fields
@@ -278,19 +278,6 @@ lookml/
 ```
 
 To deploy: connect to a Looker instance, point to this folder as the LookML project, and configure the DuckDB connection string.
-
----
-
-## Push to GitHub
-
-```bash
-git init
-git add .
-git commit -m "feat: Enterprise DW Platform — dbt + LookML + DuckDB + Metabase"
-git remote add origin https://github.com/rajapalagummi/Enterprise-DW-Platform.git
-git branch -M main
-git push -u origin main
-```
 
 ---
 
